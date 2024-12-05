@@ -1,1 +1,29 @@
-../../../codecrafters-shell-go/cmd/myshell/main.go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
+
+var _ = fmt.Fprint
+
+func main() {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Fprint(os.Stdout, "$ ")
+
+		command, err := reader.ReadString('\n')
+
+		if err != nil {
+			fmt.Println("Error reading input: ", err)
+			return
+		}
+
+		command = strings.TrimSpace(command)
+
+		fmt.Println(command + ": not found")
+	}
+}
