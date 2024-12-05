@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -14,11 +15,16 @@ func find_directory(command string) (string, bool) {
 	path := os.Getenv("PATH")
 	directories := strings.Split(path, ":")
 
-	for index, value := range directories {
-		fmt.Println(index, value)
-	}
+	for _, directory := range directories {
+		directory = strings.TrimSuffix(directory, "/")
+		candidatePath := filepath.Join(directory, command)
 
-	return "test/", true
+		info, err := os.Stat(candidatePath)
+		if err == nil && !info.IsDir() {
+			return candidatePath, true
+		}
+	}
+	return command, false
 }
 
 func main() {
@@ -58,9 +64,12 @@ func main() {
 			if exists {
 				fmt.Println(type_queried)
 			} else {
-				pathToCommand, exists := find_directory(commands[1])
+				command := commands[1]
+				pathToCommand, exists := find_directory(command)
 				if exists {
-					fmt.Fprintf(os.Stdout, "%s is %s\n", commands[1], pathToCommand)
+					fmt.Fprintf(os.Stdout, "%s is %s\n", command, pathToCommand)
+				} else {
+					fmt.Fprintf(os.Stdout, "%s: not found\n", command)
 				}
 			}
 		default:
