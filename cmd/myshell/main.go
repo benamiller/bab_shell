@@ -1,0 +1,1 @@
+../../../codecrafters-shell-go/cmd/myshell/main.go
