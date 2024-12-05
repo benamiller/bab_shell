@@ -13,6 +13,12 @@ var _ = fmt.Fprint
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
+	builtinTypes := map[string]string{
+		"exit": "exit is a shell builtin",
+		"echo": "echo is a shell builtin",
+		"type": "type is a shell builtin",
+	}
+
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
 
@@ -36,6 +42,13 @@ func main() {
 			os.Exit(code)
 		case "echo":
 			fmt.Fprintf(os.Stdout, "%s\n", strings.Join(commands[1:], " "))
+		case "type":
+			type_queried, exists := builtinTypes[commands[1]]
+			if exists {
+				fmt.Println(type_queried)
+			} else {
+				fmt.Fprintf(os.Stdout, "%s: not found\n", commands[1])
+			}
 		default:
 			fmt.Fprintf(os.Stdout, "%s: command not found\n", input)
 		}
