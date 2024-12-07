@@ -45,6 +45,10 @@ func run_command(command string, args []string) (string, bool) {
 }
 
 func change_directory(path string) error {
+	if path == "~" {
+		path = os.Getenv("HOME")
+	}
+
 	err := os.Chdir(path)
 
 	if err != nil {
