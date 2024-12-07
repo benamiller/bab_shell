@@ -51,6 +51,7 @@ func main() {
 		"exit": "exit is a shell builtin",
 		"echo": "echo is a shell builtin",
 		"type": "type is a shell builtin",
+		"pwd":  "pwd is a shell builtin",
 	}
 
 	for {
@@ -89,6 +90,12 @@ func main() {
 					fmt.Fprintf(os.Stdout, "%s: not found\n", command)
 				}
 			}
+		case "pwd":
+			directory, err := os.Getwd()
+			if err != nil {
+				fmt.Println("Error: ", err)
+			}
+			fmt.Println(directory)
 		default:
 			path, exists := run_command(commands[0], commands[1:])
 			if !exists {
