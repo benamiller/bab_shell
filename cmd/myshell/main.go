@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -25,6 +26,22 @@ func find_directory(command string) (string, bool) {
 		}
 	}
 	return command, false
+}
+
+func run_command(command string, args []string) (string, bool) {
+	path, exists := find_directory(command)
+	if !exists {
+		return "Command not found", false
+	}
+
+	cmd := exec.Command(path, args...)
+
+	output, err := cmd.Output()
+	if err == nil {
+		return strings.TrimSpace(string(output)), true
+	}
+
+	return cmd.Path, true
 }
 
 func main() {
@@ -73,7 +90,12 @@ func main() {
 				}
 			}
 		default:
-			fmt.Fprintf(os.Stdout, "%s: command not found\n", input)
+			path, exists := run_command(commands[0], commands[1:])
+			if !exists {
+				fmt.Fprintf(os.Stdout, "%s: command not found\n", input)
+			} else {
+				fmt.Println(path)
+			}
 		}
 	}
 }
