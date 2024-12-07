@@ -44,6 +44,17 @@ func run_command(command string, args []string) (string, bool) {
 	return cmd.Path, true
 }
 
+func change_directory(path string) error {
+	err := os.Chdir(path)
+
+	if err != nil {
+		fmt.Fprintf(os.Stdout, "cd: %s: No such file or directory\n", path)
+		return err
+	}
+
+	return nil
+}
+
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
@@ -52,6 +63,7 @@ func main() {
 		"echo": "echo is a shell builtin",
 		"type": "type is a shell builtin",
 		"pwd":  "pwd is a shell builtin",
+		"cd":   "cd is a shell builtin",
 	}
 
 	for {
@@ -96,6 +108,8 @@ func main() {
 				fmt.Println("Error: ", err)
 			}
 			fmt.Println(directory)
+		case "cd":
+			change_directory(commands[1])
 		default:
 			path, exists := run_command(commands[0], commands[1:])
 			if !exists {
